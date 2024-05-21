@@ -1,1 +1,1606 @@
-[]
+[
+    {
+        "id": "ab5148f07accc343",
+        "type": "tab",
+        "label": "Proyecto",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f6d6c8ec1633516f",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.9.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "fc3fdc63040c8c23",
+        "type": "OpcUa-Endpoint",
+        "endpoint": "opc.tcp://192.168.8.124:4840",
+        "secpol": "None",
+        "secmode": "None",
+        "none": true,
+        "login": false,
+        "usercert": false,
+        "usercertificate": "",
+        "userprivatekey": ""
+    },
+    {
+        "id": "29718e1acbbae656",
+        "type": "telegram bot",
+        "botname": "raspberrypi01_bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "6757e48c86675973",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.8.11",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "745303e5ee3b48b3",
+        "type": "MySQLdatabase",
+        "name": "dbusuari11",
+        "host": "192.168.9.1",
+        "port": "3306",
+        "db": "dbusuari11",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "378ae924c01f11bd",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "flowtemperatura1",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c65e673085728c4e",
+        "type": "OPCUA-IIoT-Flex-Server",
+        "z": "ab5148f07accc343",
+        "port": "55380",
+        "endpoint": "UA/NodeRedFlexIIoTServer",
+        "acceptExternalCommands": true,
+        "maxAllowedSessionNumber": "",
+        "maxConnectionsPerEndpoint": "",
+        "maxAllowedSubscriptionNumber": "",
+        "alternateHostname": "",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "allowAnonymous": true,
+        "individualCerts": false,
+        "isAuditing": false,
+        "serverDiscovery": false,
+        "users": [],
+        "xmlsets": [],
+        "publicCertificateFile": "",
+        "privateCertificateFile": "",
+        "registerServerMethod": 1,
+        "discoveryServerEndpointUrl": "",
+        "capabilitiesForMDNS": "",
+        "maxNodesPerRead": 1000,
+        "maxNodesPerBrowse": 2000,
+        "delayToClose": 1000,
+        "addressSpaceScript": "function constructAlarmAddressSpace(server, addressSpace, eventObjects, done) {\n  // server = the created node-opcua server\n  // addressSpace = script placeholder\n  // eventObjects = to hold event variables in memory from this script\n  // internal global sandbox objects are\n  // node = node of the flex server,\n  // coreServer = core iiot server object for debug and access to nodeOPCUA,\n  // and scriptObjects to hold variables and functions\n  //const opcua =coreServer.core.nodeOPCUA;\n  //const LocalizedText = coreServer.core.nodeOPCUA.LocalizedText;\n  const LocalizedText = opcua.LocalizedText;\n  const namespace = addressSpace.getOwnNamespace();\n  coreServer.internalDebugLog('init dynamic address space');\n  node.warn('construct new address space for OPC UA');\n  var flexServerInternals = this;\n  //################## INICIALIZACIONES ##########################\n  //Inicialización de las variables de temperatura\n  this.sandboxFlowContext.set(\"flowtemperatura1\", 10.9);\n  this.sandboxFlowContext.set(\"flowAlarma\", false);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo1\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo2\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo3\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo4\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo5\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo6\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo7\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo8\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo9\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo10\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo11\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo12\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo13\", 0);\n  this.sandboxFlowContext.set(\"flowvariableStructVariadorCampo14\", 0);\n\n\n\n  coreServer.internalDebugLog(\"Setup dinamic del espai de adreces\");\n\n  const rootFolder = addressSpace.findNode(\"RootFolder\");\n\n  node.warn('Construccio del nou espai de adreces per a OPC UA');\n  const ProjecteFI = namespace.addFolder(rootFolder.objects, { \"browseName\": \"ProjecteFI\" });\n  const ProjecteFI1 = namespace.addFolder(ProjecteFI, { \"browseName\": \"ProjecteFI1\" });\n  //Declaración del espacio de direcciones\n  //espacio de direcciones Temperaturas\n\n  const device = namespace.addObject({\n    organizedBy: ProjecteFI1,\n    browseName: \"Mi_PANEL\",\n  });\n\n  namespace.addVariable({\n    dataType: 'Float',\n    componentOf: device,\n    browseName: 'Temperatura1',\n    nodeId: 's=Mi_PANEL.Temperatura1',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Float,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowtemperatura1\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Boolean',\n    componentOf: device,\n    browseName: 'Alarma',\n    nodeId: 's=Mi_PANEL.Alarma',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Boolean,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowAlarma\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Estado_maquina',\n    nodeId: 's=Mi_PANEL.Estado_maquina',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo1\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Horas_Funcioando',\n    nodeId: 's=Mi_PANEL.Horas_Funcionando',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo2\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Cinta1',\n    nodeId: 's=Mi_PANEL.Cinta1',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo3\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Cinta2',\n    nodeId: 's=Mi_PANEL.Cinta2',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo4\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Cinta3',\n    nodeId: 's=Mi_PANEL.Cinta3',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo5\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Cinta4',\n    nodeId: 's=Mi_PANEL.Cinta4',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo6\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Cinta5',\n    nodeId: 's=Mi_PANEL.Cinta5',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo7\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Cilindro',\n    nodeId: 's=Mi_PANEL.Cilindro',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo8\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'PiezasA',\n    nodeId: 's=Mi_PANEL.PiezasA',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo9\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'PiezasB',\n    nodeId: 's=Mi_PANEL.PiezasB',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo10\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'PiezasD',\n    nodeId: 's=Mi_PANEL.PiezasD',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo11\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'Piezas_Totales',\n    nodeId: 's=Mi_PANEL.Piezas_Totales',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo12\")\n        });\n      }\n    }\n  });\n\n  namespace.addVariable({\n    dataType: 'Int16',\n    componentOf: device,\n    browseName: 'paro_emergencia',\n    nodeId: 's=Mi_PANEL.paro_emergencia',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int16,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo13\")\n        });\n      }\n    }\n  });\n\n\n  namespace.addVariable({\n    dataType: 'Int32',\n    componentOf: device,\n    browseName: 'Ultima_medida',\n    nodeId: 's=Mi_PANEL.Ultima_medida',\n    value: {\n      get: function () {\n        return new opcua.Variant({\n          dataType: opcua.DataType.Int32,\n          value: flexServerInternals.sandboxFlowContext.get(\"flowvariableStructVariadorCampo14\")\n        });\n      }\n    }\n  });\n\n  coreServer.internalDebugLog(\"Espai de adreces creat\");\n  node.warn(\"Contruccio del nou espai de adreces fet\");\n  done();\n}",
+        "x": 510,
+        "y": 480,
+        "wires": [
+            [
+                "6001435f34bbe80d"
+            ]
+        ]
+    },
+    {
+        "id": "d28af025133e73b5",
+        "type": "mqtt in",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "topic": "cefi/ejercicio1/fab1/temperatura3",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f6d6c8ec1633516f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "378ae924c01f11bd",
+                "8e99753d4b50437c",
+                "b3f9d2079e02b94a"
+            ]
+        ]
+    },
+    {
+        "id": "8e99753d4b50437c",
+        "type": "switch",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "19.99",
+                "vt": "str"
+            },
+            {
+                "t": "btwn",
+                "v": "20",
+                "vt": "num",
+                "v2": "29.99",
+                "v2t": "num"
+            },
+            {
+                "t": "gte",
+                "v": "30",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 510,
+        "y": 180,
+        "wires": [
+            [
+                "de1abab875683b08"
+            ],
+            [
+                "4dac19d0144dd320"
+            ],
+            [
+                "0455cc92928e15e8"
+            ]
+        ]
+    },
+    {
+        "id": "4dac19d0144dd320",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "flowAlarma",
+                "pt": "flow",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0455cc92928e15e8",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "flowAlarma",
+                "pt": "flow",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c42a7f854ea7b2a4",
+        "type": "OpcUa-Client",
+        "z": "ab5148f07accc343",
+        "endpoint": "fc3fdc63040c8c23",
+        "action": "read",
+        "deadbandtype": "a",
+        "deadbandvalue": 1,
+        "time": "6",
+        "timeUnit": "s",
+        "certificate": "n",
+        "localfile": "",
+        "localkeyfile": "",
+        "securitymode": "None",
+        "securitypolicy": "None",
+        "useTransport": false,
+        "maxChunkCount": 1,
+        "maxMessageSize": 8192,
+        "receiveBufferSize": 8192,
+        "sendBufferSize": 8192,
+        "name": "",
+        "x": 480,
+        "y": 360,
+        "wires": [
+            [
+                "d12c25703430beb0",
+                "3ed312d8060ac179"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "d12c25703430beb0",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 17",
+        "func": "var topic = flow.get('variable_topic');\n\nif (topic == \"ns=2;s=Application.GVL.struct_Etado_maquina\") {\n \n    flow.set('flowvariableStructVariadorCampo1', parseInt(msg.payload.iEstado_de_maquina,10)); \n    flow.set('flowvariableStructVariadorCampo2', parseInt(msg.payload.iHoras_funcionando,10)); \n    flow.set('flowvariableStructVariadorCampo3', parseInt(msg.payload.iNum_cinta1,10)); \n    flow.set('flowvariableStructVariadorCampo4', parseInt(msg.payload.iNum_cinta2,10)); \n    flow.set('flowvariableStructVariadorCampo5', parseInt(msg.payload.iNum_cinta3,10)); \n    flow.set('flowvariableStructVariadorCampo6', parseInt(msg.payload.iNum_cinta4,10)); \n    flow.set('flowvariableStructVariadorCampo7', parseInt(msg.payload.iNum_cinta5,10)); \n    flow.set('flowvariableStructVariadorCampo8', parseInt(msg.payload.iNum_cilindro,10)); \n    flow.set('flowvariableStructVariadorCampo9', parseInt(msg.payload.iNum_cajas_a,10)); \n    flow.set('flowvariableStructVariadorCampo10', parseInt(msg.payload.iNum_cajas_b,10)); \n    flow.set('flowvariableStructVariadorCampo11', parseInt(msg.payload.iNum_cajas_d,10)); \n    flow.set('flowvariableStructVariadorCampo12', parseInt(msg.payload.iNum_cajas_total,10)); \n\n}\nelse if (topic == \"ns=2;s=Application.GVL.Parada_emergencia\") {\n \n  flow.set('flowvariableStructVariadorCampo13', parseInt(msg.payload,10)); \n\n}\nelse if (topic == \"ns=2; =Application.GVL.Ultima_longitud\") {\n\n  flow.set('flowvariableStructVariadorCampo14', parseInt(msg.payload, 10));\n\n}\n\n\n\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 300,
+        "wires": [
+            [
+                "3969111f4d7f03c1"
+            ]
+        ]
+    },
+    {
+        "id": "4ddfcbbf2fa463b0",
+        "type": "inject",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "4",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "ns=2;s=Application.GVL.struct_Etado_maquina",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "987d5114e959b759",
+                "c42a7f854ea7b2a4"
+            ]
+        ]
+    },
+    {
+        "id": "de1abab875683b08",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "flowAlarma",
+                "pt": "flow",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "987d5114e959b759",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "variable_topic",
+                "pt": "flow",
+                "to": "topic",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 280,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3969111f4d7f03c1",
+        "type": "debug",
+        "z": "ab5148f07accc343",
+        "name": "debug 17",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "6001435f34bbe80d",
+        "type": "debug",
+        "z": "ab5148f07accc343",
+        "name": "debug 18",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "3ed312d8060ac179",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 18",
+        "func": "var Temp = flow.get(\"flowtemperatura1\");\nflow.set(\"flowtemperatura1\", Temp);\n\nvar EstMaq = flow.get(\"flowvariableStructVariadorCampo1\");\nflow.set(\"flowvariableStructVariadorCampo1\", EstMaq);\n\nvar HoraFun = flow.get(\"flowvariableStructVariadorCampo2\");\nflow.set(\"flowvariableStructVariadorCampo2\", HoraFun);\n\nvar Cint1 = flow.get(\"flowvariableStructVariadorCampo3\");\nflow.set(\"flowvariableStructVariadorCampo3\", Cint1);\n\nvar Cint2 = flow.get(\"flowvariableStructVariadorCampo4\");\nflow.set(\"flowvariableStructVariadorCampo4\", Cint2);\n\nvar Cint3 = flow.get(\"flowvariableStructVariadorCampo5\");\nflow.set(\"flowvariableStructVariadorCampo5\", Cint3);\n\nvar Cint4 = flow.get(\"flowvariableStructVariadorCampo6\");\nflow.set(\"flowvariableStructVariadorCampo6\", Cint4);\n\nvar Cint5 = flow.get(\"flowvariableStructVariadorCampo7\");\nflow.set(\"flowvariableStructVariadorCampo7\", Cint5);\n\nvar Cilin = flow.get(\"flowvariableStructVariadorCampo8\");\nflow.set(\"flowvariableStructVariadorCampo8\", Cilin);\n\nvar ProductA = flow.get(\"flowvariableStructVariadorCampo9\");\nflow.set(\"flowvariableStructVariadorCampo9\", ProductA);\n\nvar ProductB = flow.get(\"flowvariableStructVariadorCampo10\");\nflow.set(\"flowvariableStructVariadorCampo10\", ProductB);\n\nvar ProductD = flow.get(\"flowvariableStructVariadorCampo11\");\nflow.set(\"flowvariableStructVariadorCampo11\", ProductD);\n\nvar ProducTotal = flow.get(\"flowvariableStructVariadorCampo12\");\nflow.set(\"flowvariableStructVariadorCampo12\", ProducTotal);\n\n\n\nmsg.topic = \"INSERT INTO `Proyecto_Datos`(`temperatura`, `Horas_funcionamiento`, `Estado_Maquina`, `Cinta1`, `Cinta2`, `Cinta3`, `Cinta4`, `Cinta5`, `Cilindro`, `ProductoA`, `ProductoB`, `ProductoD`, `Piezas_Totales`) VALUES (\" + Temp + \",\" + HoraFun + \",\" + EstMaq + \",\" + Cint1 + \",\" + Cint2 + \",\" + Cint3 + \",\" + Cint4 + \",\" + Cint5 + \",\" + Cilin + \",\" + ProductA + \",\" + ProductB + \",\" + ProductD + \",\" + ProducTotal + \")\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 400,
+        "wires": [
+            [
+                "dd49c7071c78d8e3",
+                "e1673b11f736f58b"
+            ]
+        ]
+    },
+    {
+        "id": "7a338caa778c4557",
+        "type": "telegram sender",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "bot": "29718e1acbbae656",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 750,
+        "y": 600,
+        "wires": [
+            [
+                "8b0f07befcf90b77"
+            ]
+        ]
+    },
+    {
+        "id": "d8d54f2ed518c56f",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 19",
+        "func": "\nmsg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"La temperatura es:\" + \" \" + flow.get(\"flowtemperatura1\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8b0f07befcf90b77",
+        "type": "debug",
+        "z": "ab5148f07accc343",
+        "name": "debug 19",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "45d6f28758042a16",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/temp",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 600,
+        "wires": [
+            [
+                "d8d54f2ed518c56f"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "769f0304e0b9c4f5",
+        "type": "switch",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "30",
+                "vt": "num"
+            },
+            {
+                "t": "lte",
+                "v": "20",
+                "vt": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "29.99",
+                "vt": "num",
+                "v2": "21",
+                "v2t": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 450,
+        "y": 1420,
+        "wires": [
+            [
+                "2c4d8e29a020f327"
+            ],
+            [
+                "d9e0e1405ee606fe"
+            ],
+            [
+                "95937c5697b40785"
+            ]
+        ]
+    },
+    {
+        "id": "2c4d8e29a020f327",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "Calor",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 1360,
+        "wires": [
+            [
+                "adefb755852ba611"
+            ]
+        ]
+    },
+    {
+        "id": "d9e0e1405ee606fe",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "frio",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 1420,
+        "wires": [
+            [
+                "02eaa228c6400762"
+            ]
+        ]
+    },
+    {
+        "id": "adefb755852ba611",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 20",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Alarma, Demasido calor\",\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 1360,
+        "wires": [
+            [
+                "e11550770a1ba371"
+            ]
+        ]
+    },
+    {
+        "id": "02eaa228c6400762",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 21",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Alarma, Demasido Frio\",\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 1420,
+        "wires": [
+            [
+                "e11550770a1ba371"
+            ]
+        ]
+    },
+    {
+        "id": "e11550770a1ba371",
+        "type": "rbe",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 470,
+        "y": 1540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "95937c5697b40785",
+        "type": "change",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "Normal",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 1480,
+        "wires": [
+            [
+                "b8f1a6d1cb4961f3"
+            ]
+        ]
+    },
+    {
+        "id": "b8f1a6d1cb4961f3",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 22",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"La temperatura ya es normal\",\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 1480,
+        "wires": [
+            [
+                "e11550770a1ba371"
+            ]
+        ]
+    },
+    {
+        "id": "1a9d1db18dbd93d6",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/hora",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 660,
+        "wires": [
+            [
+                "c1df079538f4ffb4"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c1df079538f4ffb4",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 23",
+        "func": "var d=new Date();\n\nvar hours=d.getHours() //the hour (0-23)\nvar minutes=d.getMinutes() //-the minute (0-59)\nvar seconds=d.getSeconds() //-the seconds (0-59)\n\nmsg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"La Hora es:\" + \" \" + hours + \":\" + minutes,\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f2e1772f64484ad2",
+        "type": "mqtt in",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "topic": "cefi/fabrica/panel4/temp1/Sara",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "6757e48c86675973",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 1420,
+        "wires": [
+            [
+                "769f0304e0b9c4f5"
+            ]
+        ]
+    },
+    {
+        "id": "4e3c8243801ef0d3",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/horafun",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 120,
+        "y": 720,
+        "wires": [
+            [
+                "c8167931a802375b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c8167931a802375b",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 24",
+        "func": "\nmsg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las horas funcionadas son:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo2\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6f7e1f75cf57ebae",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/cinta1",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 780,
+        "wires": [
+            [
+                "3fa795077bf0c9a7"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "3fa795077bf0c9a7",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 25",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las veces que la cinta 1 se encendio:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo3\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "62d4288d2f237f94",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/cinta2",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 840,
+        "wires": [
+            [
+                "a2338a8fcfd78660"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "a2338a8fcfd78660",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 26",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las veces que la cinta 2 se encendio:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo4\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d0bef877718607d6",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/cinta3",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 900,
+        "wires": [
+            [
+                "995b221b8f338d33"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "995b221b8f338d33",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 27",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las veces que la cinta 3 se encendio:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo5\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6572582b0ef5153e",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/cinta4",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 960,
+        "wires": [
+            [
+                "9ae7e1125c04a088"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "9ae7e1125c04a088",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 28",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las veces que la cinta 4 se encendio:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo6\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 960,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9326d50b5f6b9966",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/cilindro",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 1080,
+        "wires": [
+            [
+                "79a2b8d7daedadb1"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "79a2b8d7daedadb1",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 29",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las veces que el cilindro se encendio:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo8\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1080,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "46b92ec774049680",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/productoa",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 120,
+        "y": 1140,
+        "wires": [
+            [
+                "e8d198747760873f"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "e8d198747760873f",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 30",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las total de cajas del tipo A son:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo9\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0ed0c20285600146",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/productob",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 120,
+        "y": 1200,
+        "wires": [
+            [
+                "4d44610888dcd70c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "4d44610888dcd70c",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 31",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las total de cajas del tipo B son:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo10\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "93c87277fd960445",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/productod",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 120,
+        "y": 1260,
+        "wires": [
+            [
+                "206d0287ed558762"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "206d0287ed558762",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 32",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las total de cajas del tipo D son:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo11\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "22c705d83c04df8f",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/productototal",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 130,
+        "y": 1320,
+        "wires": [
+            [
+                "754fd89fc1631ba9"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "754fd89fc1631ba9",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 33",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las total de cajas son:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo12\"),\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5cff3aab729de55a",
+        "type": "mysql",
+        "z": "ab5148f07accc343",
+        "mydb": "745303e5ee3b48b3",
+        "name": "",
+        "x": 1070,
+        "y": 400,
+        "wires": [
+            [
+                "83cf8f16f2f7316e"
+            ]
+        ]
+    },
+    {
+        "id": "845bc0566a621fec",
+        "type": "telegram command",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "command": "/cinta5",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "29718e1acbbae656",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 110,
+        "y": 1020,
+        "wires": [
+            [
+                "b2c322c3f8159b4e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "b2c322c3f8159b4e",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 34",
+        "func": "msg.payload = {\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Las veces que la cinta 5 se encendio:\" + \" \" + flow.get(\"flowvariableStructVariadorCampo7\"),\n}\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1020,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f7001637926fa40",
+        "type": "debug",
+        "z": "ab5148f07accc343",
+        "name": "debug 39",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 1840,
+        "wires": []
+    },
+    {
+        "id": "ca57e45f2395c024",
+        "type": "inject",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "4",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "ns=2;s=Application.GVL.Parada_emergencia",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 420,
+        "wires": [
+            [
+                "987d5114e959b759"
+            ]
+        ]
+    },
+    {
+        "id": "ebfb2779e55b8dfb",
+        "type": "inject",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "v": "payload",
+                "vt": "msg"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "flowvariableStructVariadorCampo13",
+        "payloadType": "flow",
+        "x": 220,
+        "y": 1600,
+        "wires": [
+            [
+                "9f7001637926fa40",
+                "ccf5d8cab4acc646"
+            ]
+        ]
+    },
+    {
+        "id": "83c098118b57332a",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 35",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Paro de emergencia desactivado\",\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 1560,
+        "wires": [
+            [
+                "0e26041fee20f069"
+            ]
+        ]
+    },
+    {
+        "id": "0e26041fee20f069",
+        "type": "rbe",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 490,
+        "y": 1780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4601e19608623855",
+        "type": "function",
+        "z": "ab5148f07accc343",
+        "name": "function 37",
+        "func": "msg.payload={\n    \"chatId\": 564715517,\n    \"type\": \"message\",\n    \"content\": \"Alarma, Paro de emergencia activado\",\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 1640,
+        "wires": [
+            [
+                "0e26041fee20f069"
+            ]
+        ]
+    },
+    {
+        "id": "ccf5d8cab4acc646",
+        "type": "switch",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 470,
+        "y": 1600,
+        "wires": [
+            [
+                "83c098118b57332a"
+            ],
+            [
+                "4601e19608623855"
+            ]
+        ]
+    },
+    {
+        "id": "83cf8f16f2f7316e",
+        "type": "debug",
+        "z": "ab5148f07accc343",
+        "name": "debug 40",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "dd49c7071c78d8e3",
+        "type": "rbe",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 910,
+        "y": 400,
+        "wires": [
+            [
+                "5cff3aab729de55a"
+            ]
+        ]
+    },
+    {
+        "id": "e1673b11f736f58b",
+        "type": "debug",
+        "z": "ab5148f07accc343",
+        "name": "debug 41",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 980,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "0ede6dd5158f7034",
+        "type": "inject",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "4",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "ns=2;s=Application.GVL.Ultima_longitud",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 480,
+        "wires": [
+            [
+                "987d5114e959b759"
+            ]
+        ]
+    },
+    {
+        "id": "9170250ba0879363",
+        "type": "telegram receiver",
+        "z": "ab5148f07accc343",
+        "name": "",
+        "bot": "29718e1acbbae656",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 750,
+        "y": 680,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "b3f9d2079e02b94a",
+        "type": "debug",
+        "z": "ab5148f07accc343",
+        "name": "debug 42",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 180,
+        "wires": []
+    }
+]
